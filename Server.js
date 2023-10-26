@@ -7,6 +7,7 @@ const app = require('./app');
 // from a .env file into process.env
 dotenv.config({ path: './config.env' });
 const DB = process.env.DATABASE;
+
 mongoose
   .connect(DB, {
     // what are these doing?

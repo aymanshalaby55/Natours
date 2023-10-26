@@ -5,10 +5,7 @@ const Tour = require('./../Models/TourModel');
 
 dotenv.config({ path: './config.env' });
 
-const DB = process.env.DATABASE.replace(
-  '<PASSWORD>',
-  process.env.DATABASE_PASSWORD
-);
+const DB = process.env.DATABASE;
 
 mongoose
   .connect(DB, {
@@ -19,7 +16,12 @@ mongoose
   .then(() => console.log('DB connection successful!'));
 
 // READ JSON FILE
-const data = JSON.parse(fs.readFileSync('D:/Programming/Backend/NodeJs/Node js codes/Natours/dev-data/data/tours-simple.json', 'utf-8'));
+const data = JSON.parse(
+  fs.readFileSync(
+    'D:/Programming/Backend/NodeJs/Node js codes/Natours/dev-data/data/tours-simple.json',
+    'utf-8'
+  )
+);
 console.log(data);
 
 // IMPORT DATA INTO DB

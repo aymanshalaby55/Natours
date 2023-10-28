@@ -32,7 +32,6 @@ exports.GETALLTours = async (req, res) => {
       status: 'Fail',
       message: err
     });
-    console.log(err);
   }
 };
 
@@ -115,5 +114,95 @@ exports.UpdateTour = async (req, res) => {
       status: 'fail',
       message: err
     });
+  }
+};
+// aggregate function
+exports.getTourStatus = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } }
+      },
+      {
+        $group: {
+          _id: '$difficulty', // aggregate tours togather for specific field
+          num: { $sum: 1 },
+          numRating: { $sum: '$ratingsQuantity' },
+          AVG: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' }
+        }
+      },
+      {
+        $sort: { avgPrice: 1 }
+      },
+      {
+        $match: { _id: { $ne: 'easy' } } // filtering to not equal
+      }
+    ]);
+
+    res.status(200).json({
+      status: 'Success',
+      message: stats
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+    console.log(err);
+  }
+};
+
+exports.GetMonthlyPlan = async (req, res) => {
+  try {
+    const years = req.params.year * 1;
+
+    const tours = await Tour.aggregate([
+      {
+        $unwind: '$startDates'
+      },
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${years}-01-01`),
+            $lte: new Date(`${years}-12-31`)
+          }
+        }
+      },
+      {
+        $group: {
+          _id: { $month: '$startDates' }, // group the months
+          Tours_num: { $sum: 1 },
+          Tours: { $push: '$name' } // push return array of matched fields
+        }
+      },
+      {
+        $addFields: { month: '$_id' }
+      },
+      {
+        $project: {
+          // take 0 or 1 : 0->don't show , 1 show
+          _id: 0
+        }
+      },
+      {
+        $sort: { Tours_num: -1 }
+      },
+      {
+        $limit: 12
+      }
+    ]);
+    res.status(200).json({
+      status: 'Success',
+      message: tours
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: 'Fail',
+      message: err
+    });
+    console.log(err);
   }
 };

@@ -2,27 +2,30 @@
 const express = require('express');
 const morgan = require('morgan');
 
-const app = express();
+const AppErorr = require('./ultis/appError.js');
 const ToursRout = require('./Routs/ToursRouts');
 const UserRout = require('./Routs/UserRouts');
+const GlobalError = require('./Controllers/errorController.js');
 
+const app = express();
 // 2) middlewares
 app.use(express.json());
-app.use(morgan('dev')); // 
+app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/public`)); // to access static files e.g : html css imgs etc.
 
 //3) ROUTS --> top
 app.use('/api/v1/tours', ToursRout);
 app.use('/api/v1/users', UserRout);
 
-// ? --> for optional params
-// TOURS Routs
+//! if we are able to reach this point then there is no rout to handle the request
+// all : for all http requests
+// * :for any rout url
+app.all('*', (req, res, next) => {
+  // if next has argument express automaticly will skip all middlewares and go to our error handler middlerware
+  next(new AppErorr(`can't find ${req.originalUrl} on this server`, 404));
+});
 
-// app.get('/api/v1/tours', GETALLTours);
-// app.post('/api/v1/tours', CreateTour);
-// app.get('/api/v1/tours/:id', GetTour);
-// app.patch('/api/v1/tours/:id', UpdateTour);
-// app.delete('/api/v1/tours/:id', DeleteTour);
+// CatchAsync will be catched here
+app.use(GlobalError);
 
 module.exports = app;
-

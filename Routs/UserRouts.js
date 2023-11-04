@@ -1,11 +1,15 @@
 // USERS Routs
 const express = require('express');
-const TUserControllers = require('./../Controllers/Usercontroller')
+const UserControllers = require('./../Controllers/Usercontroller');
+const authController = require('./../Controllers/authController');
+
 const userRouter = express.Router();
 
-userRouter.route('/')
-    .get(TUserControllers.GetAllUsers).
-    patch(TUserControllers.CreateUser);
+userRouter.post('/signup', authController.signup);
 
+userRouter
+  .route('/:id')
+  .get(UserControllers.GetAllUsers)
+  .patch(UserControllers.CreateUser);
 
 module.exports = userRouter;

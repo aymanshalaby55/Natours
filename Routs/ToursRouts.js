@@ -1,5 +1,6 @@
 const express = require('express');
 const TourControllers = require('./../Controllers/tourcontrollers');
+const authController = require('./../Controllers/authController');
 
 const ToursRouter = express.Router(); // middleware for routing aka Mounting
 //ToursRouter.param('id', TourControllers.CheckID);
@@ -12,12 +13,24 @@ ToursRouter.route('/top-5-cheap').get(
   TourControllers.GETALLTours
 );
 ToursRouter.route('/')
-  .get(TourControllers.GETALLTours)
-  .post(TourControllers.CreateTour);
+  .get(authController.protect, TourControllers.GETALLTours)
+  .post(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    TourControllers.CreateTour
+  );
 
 ToursRouter.route('/:id')
   .get(TourControllers.GetTour)
-  .patch(TourControllers.UpdateTour)
-  .delete(TourControllers.DeleteTour);
+  .patch(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    TourControllers.UpdateTour
+  )
+  .delete(
+    authController.protect,
+    authController.restrictTo('admin', 'lead-guide'),
+    TourControllers.DeleteTour
+  );
 
 module.exports = ToursRouter;

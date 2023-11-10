@@ -95,7 +95,7 @@ tourSchema.pre('save', function(next) {
   next();
 });
 tourSchema.post('save', function(doc, next) {
-  console.log(doc);
+  //console.log(doc);
   next();
 });
 // any string is start with find.
@@ -108,7 +108,7 @@ tourSchema.pre(/^find/, function(next) {
 // we have access to every document from the query.
 tourSchema.post(/^find/, function(docs, next) {
   // this point to the query
-  console.log(docs);
+  //console.log(docs);
   next();
 });
 
@@ -116,7 +116,7 @@ tourSchema.post(/^find/, function(docs, next) {
 tourSchema.pre('aggregate', function(next) {
   // unshift is array method that push elment or front
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  console.log(this);
+  //console.log(this);
   next();
 });
 

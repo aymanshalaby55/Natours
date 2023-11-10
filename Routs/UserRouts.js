@@ -3,13 +3,23 @@ const express = require('express');
 const UserControllers = require('./../Controllers/Usercontroller');
 const authController = require('./../Controllers/authController');
 
-const userRouter = express.Router();
+const rout = express.Router();
 
-userRouter.post('/signup', authController.signup);
+rout.post('/signup', authController.signup);
+rout.post('/login', authController.login);
 
-userRouter
-  .route('/:id')
-  .get(UserControllers.GetAllUsers)
-  .patch(UserControllers.CreateUser);
+rout.post('/forgetPassword', authController.forgetPassword);
+rout.patch('/resetPassword/:token', authController.resetPassword);
 
-module.exports = userRouter;
+rout.patch(
+  '/updatePassword',
+  authController.protect,
+  authController.UpdatePassword
+);
+
+// rout
+//   .route('/')
+//   .get(UserControllers.GetAllUsers)
+//   .patch(UserControllers.CreateUser);
+
+module.exports = rout;

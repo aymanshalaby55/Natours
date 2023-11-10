@@ -13,6 +13,11 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/public`)); // to access static files e.g : html css imgs etc.
 
+app.use((req, res, next) => {
+  //console.log(req.headers);
+  next();
+});
+
 //3) ROUTS --> top
 app.use('/api/v1/tours', ToursRout);
 app.use('/api/v1/users', UserRout);
@@ -25,7 +30,7 @@ app.all('*', (req, res, next) => {
   next(new AppErorr(`can't find ${req.originalUrl} on this server`, 404));
 });
 
-// CatchAsync will be catched here
+// catch errors and send it to middleware error controller
 app.use(GlobalError);
 
 module.exports = app;

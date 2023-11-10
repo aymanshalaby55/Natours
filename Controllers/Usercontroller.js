@@ -1,32 +1,15 @@
-const fs = require('fs');
+const { default: mongoose } = require('mongoose');
+const User = require('../Models/userModel');
+const CatchAsync = require('./../ultis/CatchAsync');
 
-const Users = JSON.parse(
-  fs.readFileSync(`${__dirname}/../dev-data/data/users.json`)
-);
+exports.GetAllUsers = CatchAsync(async (req, res, next) => {
+  const user = await User.find();
 
-exports.GetAllUsers = (req, res) => {
   res.status(200).json({
     status: 'success',
-    result: Users.length,
+    resluts: user.length,
     data: {
-      Users
+      user
     }
   });
-};
-exports.CreateUser = (req, res) => {
-  const newid = Users[Users.length - 1].id + 1;
-  const newUser = Object.assign({ id: newid }, req.body);
-  Users.push(newUser);
-  fs.writeFile(
-    `${__dirname}/dev-data/data/users.json`,
-    JSON.stringify(Users),
-    err => {
-      res.status(201).json({
-        status: 'success',
-        data: {
-          tour: Users
-        }
-      });
-    }
-  );
-};
+});

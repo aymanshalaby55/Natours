@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 
 const AppErorr = require('./ultis/appError.js');
 const ToursRout = require('./Routs/ToursRouts');
@@ -9,8 +10,21 @@ const GlobalError = require('./Controllers/errorController.js');
 
 const app = express();
 // 2) middlewares
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
+
+// 100 req for 1 ip in 1 hour
+const limit = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'too many requests from this IP, please try again in an hour'
+});
+
+// only for api rout
+app.use('/api',limit);
+
 app.use(express.json());
-app.use(morgan('dev'));
 app.use(express.static(`${__dirname}/public`)); // to access static files e.g : html css imgs etc.
 
 app.use((req, res, next) => {

@@ -40,7 +40,17 @@ const UserSchema = mongoose.Schema({
   photo: String,
   passwordChangedAt: Date,
   passwordResetToken: String,
-  expireResetToken: Date
+  expireResetToken: Date,
+  active: {
+    type: Boolean,
+    select: false,
+    default: true
+  }
+});
+
+UserSchema.pre('/^find/', function(next) {
+  this.find({ active: true });
+  next();
 });
 
 UserSchema.pre('save', function(next) {

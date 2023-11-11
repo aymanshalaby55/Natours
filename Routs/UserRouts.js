@@ -17,9 +17,7 @@ rout.patch(
 );
 
 rout.patch('/UpdateMe', authController.protect, UserControllers.UpdateMe);
-// rout
-//   .route('/')
-//   .get(UserControllers.GetAllUsers)
-//   .patch(UserControllers.CreateUser);
+rout.delete('/DeleteUser', authController.protect, UserControllers.deleteUser);
+rout.route('/').get(authController.protect, UserControllers.GetAllUsers);
 
 module.exports = rout;

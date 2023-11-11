@@ -15,9 +15,25 @@ const signToken = id => {
 
 const CreateSendToken = (user, code, res) => {
   const token = signToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_Cookie_Expire * 24 * 60 * 60 * 1000 // convert it to milleseconds
+    ),
+    httpOnly: true
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    cookieOptions.secure = true;
+  }
+
+  res.cookie('jwt', token, cookieOptions);
+
   res.status(code).json({
     status: 'succss',
-    token
+    token,
+    date: {
+      user
+    }
   });
 };
 exports.signup = CatchAsync(async (req, res, next) => {
@@ -29,6 +45,9 @@ exports.signup = CatchAsync(async (req, res, next) => {
     passwordconfirm: req.body.passwordConfirm,
     role: req.body.role
   });
+
+  //remove password apperance when creating document
+  newUser.password = undefined;
 
   // define token for user.
   CreateSendToken(newUser, 201, res);

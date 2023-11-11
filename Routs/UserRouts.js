@@ -10,13 +10,13 @@ rout.post('/login', authController.login);
 
 rout.post('/forgetPassword', authController.forgetPassword);
 rout.patch('/resetPassword/:token', authController.resetPassword);
-
 rout.patch(
   '/updatePassword',
   authController.protect,
   authController.UpdatePassword
 );
 
+rout.patch('/UpdateMe', authController.protect, UserControllers.UpdateMe);
 // rout
 //   .route('/')
 //   .get(UserControllers.GetAllUsers)

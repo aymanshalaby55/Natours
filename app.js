@@ -2,6 +2,10 @@
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const AppErorr = require('./ultis/appError.js');
 const ToursRout = require('./Routs/ToursRouts');
@@ -10,11 +14,13 @@ const GlobalError = require('./Controllers/errorController.js');
 
 const app = express();
 // 2) middlewares
+app.use(helmet()); // set security https headers
+
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// 100 req for 1 ip in 1 hour
+// limit req for same api
 const limit = rateLimit({
   max: 100,
   windowMs: 60 * 60 * 1000,
@@ -22,9 +28,31 @@ const limit = rateLimit({
 });
 
 // only for api rout
-app.use('/api',limit);
+app.use('/api', limit);
 
-app.use(express.json());
+// Body parser, reading data for body (req.body)
+app.use(express.json({ limit: '10kb' })); // limit body size to 10kb only
+
+// data sanitization against NoSQL query injection.
+app.use(mongoSanitize()); // filter all $ and :
+
+// data sanitization XSS
+app.use(xss());
+
+// Prevent parameter pollution
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price'
+    ]
+  })
+);
+
 app.use(express.static(`${__dirname}/public`)); // to access static files e.g : html css imgs etc.
 
 app.use((req, res, next) => {

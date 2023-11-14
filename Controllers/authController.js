@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { promisify } = require('util');
+
 const CatchAsync = require('../ultis/CatchAsync');
 const User = require('./../Models/userModel');
 const AppErorr = require('./../ultis/appError');

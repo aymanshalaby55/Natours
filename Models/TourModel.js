@@ -9,8 +9,8 @@ const tourSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Tour must have a name'],
       unique: true,
-      trim: true,
-      validate: [validator.isAlpha, 'tour name must contain only characters']
+      trim: true
+      //validate: [validator.isAlpha, 'tour name must contain only characters']
     },
     slug: String,
     duration: {
@@ -78,7 +78,36 @@ const tourSchema = new mongoose.Schema(
     secretTour: {
       type: Boolean,
       defult: false
-    }
+    },
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point']
+      },
+      coordinates: [Number] //الافقي والرأسي
+    },
+    locations: [
+      {
+        // GeoJSON
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point']
+        },
+        coordinates: [Number], //الافقي والرأسي
+        address: String,
+        description: String,
+        day: String
+      }
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User' // not need to import user model.
+      }
+    ]
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
@@ -98,6 +127,7 @@ tourSchema.post('save', function(doc, next) {
   //console.log(doc);
   next();
 });
+
 // any string is start with find.
 tourSchema.pre(/^find/, function(next) {
   // this point to the query
@@ -105,7 +135,16 @@ tourSchema.pre(/^find/, function(next) {
   next();
 });
 
-// we have access to every document from the query.
+// Populatwe
+tourSchema.pre(/^find/, function(next) {
+  // this point to the query
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt'
+  });
+  next();
+});
+// we have access to every document from the body.
 tourSchema.post(/^find/, function(docs, next) {
   // this point to the query
   //console.log(docs);

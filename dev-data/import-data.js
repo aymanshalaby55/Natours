@@ -18,11 +18,10 @@ mongoose
 // READ JSON FILE
 const data = JSON.parse(
   fs.readFileSync(
-    'D:/Programming/Backend/NodeJs/Node js codes/Natours/dev-data/data/tours-simple.json',
+    'D:/Programming/Backend/NodeJs/Node js codes/Natours/dev-data/data/tours.json',
     'utf-8'
   )
 );
-console.log(data);
 
 // IMPORT DATA INTO DB
 const importData = async () => {

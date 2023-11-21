@@ -42,7 +42,7 @@ exports.GETALLTours = CatchAsync(async (req, res) => {
 
 //? MongoDB uses a special type of ID called ObjectId
 exports.GetTour = CatchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id);
+  const tour = await Tour.findById(req.params.id).populate({ path: 'reviews' });
   if (!tour) {
     return next(new AppErorr('No Tour found with that ID', 404));
   }

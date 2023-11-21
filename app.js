@@ -10,6 +10,7 @@ const hpp = require('hpp');
 const AppErorr = require('./ultis/appError.js');
 const ToursRout = require('./Routs/ToursRouts');
 const UserRout = require('./Routs/UserRouts');
+const reviewRout = require('./Routs/reviewRout');
 const GlobalError = require('./Controllers/errorController.js');
 
 const app = express();
@@ -63,7 +64,7 @@ app.use((req, res, next) => {
 //3) ROUTS --> top
 app.use('/api/v1/tours', ToursRout);
 app.use('/api/v1/users', UserRout);
-
+app.use('/api/v1/reviwes', reviewRout);
 //! if we are able to reach this point then there is no rout to handle the request
 // all : for all http requests
 // * :for any rout url

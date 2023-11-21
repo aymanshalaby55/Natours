@@ -105,17 +105,23 @@ const tourSchema = new mongoose.Schema(
     guides: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'User' // not need to import user model.
+        ref: 'User' // no need to import user model.
       }
     ]
   },
-  { toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { toJSON: { virtuals: true }, toObject: { virtuals: true } } // make sure that virtual property appear in the querise.
 );
 
 //! when need to use (this) you have to use regular function inseted of arrow function
 tourSchema.virtual('duraionWeeks').get(function() {
   // virtual properties do not store in the database
   return this.duration / 7;
+});
+
+tourSchema.virtual('reviews', {
+  ref: 'Reviwe',
+  foreignField: 'tour',
+  localField: '_id'
 });
 
 // Dcoument middleware : pre run before .save and .create
@@ -151,7 +157,7 @@ tourSchema.post(/^find/, function(docs, next) {
   next();
 });
 
-// Aggregation middleware : return pipline of aggregation operations
+// Aggregation middleware :   pipline of aggregation operations
 tourSchema.pre('aggregate', function(next) {
   // unshift is array method that push elment or front
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });

@@ -1,9 +1,13 @@
 const express = require('express');
 const TourControllers = require('./../Controllers/tourcontrollers');
 const authController = require('./../Controllers/authController');
+const reviewController = require('./../Controllers/reviweController');
+const reviewRouter = require('./reviewRout');
 
 const ToursRouter = express.Router(); // middleware for routing aka Mounting
 //ToursRouter.param('id', TourControllers.CheckID);
+
+ToursRouter.use('/:tourId/reviwes', reviewRouter);
 
 ToursRouter.route('/tour-status').get(TourControllers.getTourStatus);
 ToursRouter.route('/monthly-plan/:year').get(TourControllers.GetMonthlyPlan);
@@ -32,5 +36,11 @@ ToursRouter.route('/:id')
     authController.restrictTo('admin', 'lead-guide'),
     TourControllers.DeleteTour
   );
+
+ToursRouter.route('/:TourId/reviwes').post(
+  authController.protect,
+  authController.restrictTo('user'),
+  reviewController.CreateReviwe
+);
 
 module.exports = ToursRouter;

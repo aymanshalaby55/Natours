@@ -7,6 +7,7 @@ const {
   findByIdAndUpdate,
   findByIdAndDelete
 } = require('../Models/TourModel');
+const factory = require('./handlerFactory');
 
 const filterObj = (obj, ...allowedFileds) => {
   const newobj = {};
@@ -18,17 +19,11 @@ const filterObj = (obj, ...allowedFileds) => {
   return newobj;
 };
 
-exports.GetAllUsers = CatchAsync(async (req, res, next) => {
-  const user = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    resluts: user.length,
-    data: {
-      user
-    }
-  });
-});
+exports.GetAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+// don't update password with this. this rout for admins.
+exports.UpdateUser = factory.UpdateOne(User);
+exports.deleteUser = factory.deleteOne(User);
 
 exports.UpdateMe = CatchAsync(async (req, res, next) => {
   // user must not update password here.

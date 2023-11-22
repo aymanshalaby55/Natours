@@ -1,9 +1,8 @@
 const { default: mongoose } = require('mongoose');
 const Tour = require('../Models/TourModel'); // handle node models
-const APIFeatures = require('../ultis/apifeatures');
-// handle  async functions errors
 const CatchAsync = require('./../ultis/CatchAsync');
 const AppErorr = require('./../ultis/appError');
+const factory = require('./handlerFactory');
 // for the most used routs
 exports.aliastoptours = (req, res, next) => {
   req.query.limit = '5';
@@ -12,74 +11,16 @@ exports.aliastoptours = (req, res, next) => {
   next();
 };
 
-exports.CreateTour = CatchAsync(async (req, res) => {
-  const newTour = await Tour.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    data: {
-      newTour
-    }
-  });
-});
+exports.CreateTour = factory.createOne(Tour);
 
-exports.GETALLTours = CatchAsync(async (req, res) => {
-  //! why i don't await for the find qurey itself?
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .paginate()
-    .limit();
-  const Tours = await features.query;
+exports.DeleteTour = factory.deleteOne(Tour);
 
-  res.status(200).json({
-    status: 'success',
-    resluts: Tours.length,
-    data: {
-      Tours
-    }
-  });
-});
+exports.UpdateTour = factory.UpdateOne(Tour);
 
-//? MongoDB uses a special type of ID called ObjectId
-exports.GetTour = CatchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate({ path: 'reviews' });
-  if (!tour) {
-    return next(new AppErorr('No Tour found with that ID', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour
-    }
-  });
-});
+exports.GetTour = factory.getOne(Tour, { path: 'reviews' });
 
-exports.DeleteTour = CatchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
-  if (!tour) {
-    return next(new AppErorr('No Tour found with that ID', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: tour
-  });
-});
+exports.GETALLTours = factory.getAll(Tour);
 
-exports.UpdateTour = CatchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true
-  });
-  if (!tour) {
-    return next(new AppErorr('No Tour found with that ID', 404));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour
-    }
-  });
-});
 // aggregate function
 exports.getTourStatus = CatchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([

@@ -11,6 +11,8 @@ exports.setUserTourIds = (req, res, next) => {
 
 exports.getReviwes = factory.getAll(Review);
 
+exports.getReview = factory.getOne(Review);
+
 exports.CreateReviwe = factory.createOne(Review);
 
 exports.updateReview = factory.UpdateOne(Review);

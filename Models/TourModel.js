@@ -112,6 +112,8 @@ const tourSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } } // make sure that virtual property appear in the querise.
 );
 
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+
 //! when need to use (this) you have to use regular function inseted of arrow function
 tourSchema.virtual('duraionWeeks').get(function() {
   // virtual properties do not store in the database
@@ -124,7 +126,7 @@ tourSchema.virtual('reviews', {
   localField: '_id'
 });
 
-// Dcoument middleware : pre run before .save and .create
+// Dcoument middleware : pre run before .save and .create only
 tourSchema.pre('save', function(next) {
   this.slug = slugify(this.name, { lower: true });
   next();

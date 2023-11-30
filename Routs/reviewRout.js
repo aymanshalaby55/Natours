@@ -4,11 +4,12 @@ const authController = require('../Controllers/authController');
 
 const routs = express.Router({ mergeParams: true }); // allow access to reviwe parameters
 
+routs.use(authController.protect);
+
 routs
   .route('/')
   .get(reviewcotroller.getReviwes)
   .post(
-    authController.protect,
     authController.restrictTo('user'),
     reviewcotroller.setUserTourIds,
     reviewcotroller.CreateReviwe
@@ -16,7 +17,14 @@ routs
 
 routs
   .route('/:id')
-  .patch(reviewcotroller.updateReview)
-  .delete(reviewcotroller.deleteReview);
+  .get(reviewcotroller.getReview)
+  .patch(
+    authController.restrictTo('user', 'admin'),
+    reviewcotroller.updateReview
+  )
+  .delete(
+    authController.restrictTo('user', 'admin'),
+    reviewcotroller.deleteReview
+  );
 
 module.exports = routs;

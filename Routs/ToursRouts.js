@@ -10,14 +10,18 @@ const ToursRouter = express.Router(); // middleware for routing aka Mounting
 ToursRouter.use('/:tourId/reviwes', reviewRouter);
 
 ToursRouter.route('/tour-status').get(TourControllers.getTourStatus);
-ToursRouter.route('/monthly-plan/:year').get(TourControllers.GetMonthlyPlan);
+ToursRouter.route('/monthly-plan/:year').get(
+  authController.protect,
+  authController.restrictTo('admin', 'lead-guide', 'guide'),
+  TourControllers.GetMonthlyPlan
+);
 
 ToursRouter.route('/top-5-cheap').get(
   TourControllers.aliastoptours,
   TourControllers.GETALLTours
 );
 ToursRouter.route('/')
-  .get(authController.protect, TourControllers.GETALLTours)
+  .get(TourControllers.GETALLTours)
   .post(
     authController.protect,
     authController.restrictTo('admin', 'lead-guide'),

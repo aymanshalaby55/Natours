@@ -1,0 +1,12 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "notes",
+  "steps": [
+    {
+      "file": "Controllers/authController.js",
+      "description": "create token key",
+      "line": 11
+    }
+  ],
+  "ref": "main"
+}

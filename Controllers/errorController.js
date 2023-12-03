@@ -21,7 +21,7 @@ const handJWTExpireDate = () =>
   new AppErorr('Token Expired, please log in again', 401);
 
 const SendErrorDev = (err, res) => {
-  if (err.isOperational) {
+  if (!err.isOperational) {
     res.status(err.statusCode).json({
       status: 'fail',
       err: err,

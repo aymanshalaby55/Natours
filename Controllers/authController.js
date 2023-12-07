@@ -3,10 +3,10 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { promisify } = require('util');
 
-const CatchAsync = require('../ultis/CatchAsync');
+const CatchAsync = require('../utils/CatchAsync');
 const User = require('./../Models/userModel');
-const AppErorr = require('./../ultis/appError');
-const sendEmail = require('./../ultis/email');
+const AppErorr = require('./../utils/appError');
+const sendEmail = require('./../utils/email');
 
 const signToken = id => {
   return jwt.sign({ id: id }, process.env.JWT_secret, {

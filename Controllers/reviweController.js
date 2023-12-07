@@ -1,4 +1,4 @@
-const CatchAsync = require('../ultis/CatchAsync');
+const CatchAsync = require('../utils/CatchAsync');
 const Review = require('./../Models/reviweModel');
 const factory = require('./handlerFactory');
 

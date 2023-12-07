@@ -1,8 +1,9 @@
 const { default: mongoose } = require('mongoose');
 const Tour = require('../Models/TourModel'); // handle node models
-const CatchAsync = require('./../ultis/CatchAsync');
-const AppErorr = require('./../ultis/appError');
+const CatchAsync = require('./../utils/CatchAsync');
+const AppErorr = require('./../utils/appError');
 const factory = require('./handlerFactory');
+
 // for the most used routs
 exports.aliastoptours = (req, res, next) => {
   req.query.limit = '5';
@@ -94,5 +95,63 @@ exports.GetMonthlyPlan = CatchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'Success',
     message: tours
+  });
+});
+
+// tour-within?distance=223/center/-40,45/mi
+exports.tourWithin = CatchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  if (!lat || !lng) {
+    next(new AppErorr('Please Enter latitutr and longitude'));
+  }
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+  console.log(lat, lng);
+
+  const tours = await Tour.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } }
+  });
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      tours
+    }
+  });
+});
+
+exports.getDistance = CatchAsync(async (req, res, next) => {
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(',');
+  if (!lat || !lng) {
+    next(new AppErorr('Please Enter latitutr and longitude'));
+  }
+  const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: 'Point',
+          coordinates: [lng * 1, lat * 1]
+        },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier
+      }
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1
+      }
+    }
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    results: distances.length,
+    data: {
+      distances
+    }
   });
 });

@@ -7,7 +7,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
-const AppErorr = require('./ultis/appError.js');
+const AppErorr = require('./utils/appError.js');
 const ToursRout = require('./Routs/ToursRouts');
 const UserRout = require('./Routs/UserRouts');
 const reviewRout = require('./Routs/reviewRout');

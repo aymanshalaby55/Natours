@@ -1,6 +1,6 @@
-const AppErorr = require('./../ultis/appError');
-const CatchAsync = require('./../ultis/CatchAsync');
-const APIFeatures = require('../ultis/apifeatures');
+const AppErorr = require('./../utils/appError');
+const CatchAsync = require('./../utils/CatchAsync');
+const APIFeatures = require('../utils/apifeatures');
 
 exports.deleteOne = Model =>
   CatchAsync(async (req, res, next) => {
@@ -33,7 +33,6 @@ exports.UpdateOne = Model =>
 
 exports.createOne = Model =>
   CatchAsync(async (req, res) => {
-    console.log(1);
     const doc = await Model.create(req.body);
     res.status(201).json({
       status: 'success',

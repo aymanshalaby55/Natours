@@ -90,7 +90,6 @@ reviewSchema.post('save', function() {
 // findByIdAndDelete
 reviewSchema.pre(/^findOneAnd/, async function(next) {
   this.r = await this.findOne().clone(); // should do the work
-  console.log(this);
   next();
 });
 

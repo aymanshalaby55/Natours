@@ -20,6 +20,14 @@ ToursRouter.route('/top-5-cheap').get(
   TourControllers.aliastoptours,
   TourControllers.GETALLTours
 );
+
+ToursRouter.route('/tour-within/:distance/center/:latlng/unit/:unit').get(
+  TourControllers.tourWithin
+);
+ToursRouter.route('/distances/:latlng/unit/:unit').get(
+  TourControllers.getDistance
+);
+
 ToursRouter.route('/')
   .get(TourControllers.GETALLTours)
   .post(

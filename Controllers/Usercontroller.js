@@ -1,7 +1,7 @@
 const { default: mongoose } = require('mongoose');
 const User = require('../Models/userModel');
-const CatchAsync = require('./../ultis/CatchAsync');
-const AppErorr = require('../ultis/appError');
+const CatchAsync = require('./../utils/CatchAsync');
+const AppErorr = require('../utils/appError');
 const {
   findById,
   findByIdAndUpdate,

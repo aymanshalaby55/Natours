@@ -113,6 +113,8 @@ const tourSchema = new mongoose.Schema(
 );
 
 tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' }); // indexed to 2d sphere.
 
 //! when need to use (this) you have to use regular function inseted of arrow function
 tourSchema.virtual('duraionWeeks').get(function() {
@@ -159,13 +161,13 @@ tourSchema.post(/^find/, function(docs, next) {
   next();
 });
 
-// Aggregation middleware :   pipline of aggregation operations
-tourSchema.pre('aggregate', function(next) {
-  // unshift is array method that push elment or front
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  //console.log(this);
-  next();
-});
+// // Aggregation middleware :   pipline of aggregation operations
+// tourSchema.pre('aggregate', function(next) {
+//   // unshift is array method that push elment or front
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   //console.log(this);
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 

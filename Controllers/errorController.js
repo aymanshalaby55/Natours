@@ -20,8 +20,8 @@ const handJWTError = () =>
 const handJWTExpireDate = () =>
   new AppErorr('Token Expired, please log in again', 401);
 
-const SendErrorDev = (err, res) => {
-  if (!err.isOperational) {
+const SendErrorDev = (err, req, res) => {
+  if (req.originalUrl.startsWith('/api')) {
     res.status(err.statusCode).json({
       status: 'fail',
       err: err,
@@ -29,16 +29,15 @@ const SendErrorDev = (err, res) => {
       Stack: err.Stack
     });
   } else {
-    console.error(err);
-    res.status(500).json({
-      status: 'error',
-      message: 'something went wrong',
-      stack: err.stack
+    // Render error pages
+    res.render('error', {
+      title: 'Something went wrong',
+      msg: err.message
     });
   }
 };
 
-const SendErrorPro = (err, res) => {
+const SendErrorPro = (err, req, res) => {
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: 'fail',
@@ -60,7 +59,7 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
   if (process.env.NODE_ENV === 'development') {
-    SendErrorDev(err, res);
+    SendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     //  cast error
     let error = { ...err };
@@ -81,6 +80,6 @@ module.exports = (err, req, res, next) => {
       error = handJWTExpireDate(error);
     }
 
-    SendErrorPro(error, res);
+    SendErrorPro(error, req, res);
   }
 };

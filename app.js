@@ -1,25 +1,38 @@
 /* eslint-disable prettier/prettier */
 const express = require('express');
+const path = require('path');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
+const cors = require('cors');
+const cookie =  require('cookie-parser')
 
 const AppErorr = require('./utils/appError.js');
 const ToursRout = require('./Routs/ToursRouts');
 const UserRout = require('./Routs/UserRouts');
 const reviewRout = require('./Routs/reviewRout');
 const GlobalError = require('./Controllers/errorController.js');
+const viewRouts = require('./Routs/viewRouts.js');
 
 const app = express();
 // 2) middlewares
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+
+const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+
 app.use(helmet()); // set security https headers
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+
+app.use(cors());
 
 // limit req for same api
 const limit = rateLimit({
@@ -33,6 +46,8 @@ app.use('/api', limit);
 
 // Body parser, reading data for body (req.body)
 app.use(express.json({ limit: '10kb' })); // limit body size to 10kb only
+app.use(express.urlencoded({extended: true , limit:'10kb'})); //get encoded data from html action.
+app.use(cookie());
 
 // data sanitization against NoSQL query injection.
 app.use(mongoSanitize()); // filter all $ and :
@@ -54,14 +69,15 @@ app.use(
   })
 );
 
-app.use(express.static(`${__dirname}/public`)); // to access static files e.g : html css imgs etc.
+app.use(express.static(path.join(__dirname, 'public'))); // to access static files e.g : html css imgs etc.
 
 app.use((req, res, next) => {
-  //console.log(req.headers);
+ // console.log(req.cookies);
   next();
 });
 
 //3) ROUTS --> top
+app.use('/', viewRouts);
 app.use('/api/v1/tours', ToursRout);
 app.use('/api/v1/users', UserRout);
 app.use('/api/v1/reviwes', reviewRout);

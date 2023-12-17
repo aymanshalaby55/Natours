@@ -44,6 +44,8 @@ exports.UpdateMe = CatchAsync(async (req, res, next) => {
     runvalidators: true
   });
 
+  console.log(UpdateUser);
+
   res.status(200).json({
     status: 'success',
     user: UpdateUser

@@ -9,6 +9,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cors = require('cors');
 const cookie =  require('cookie-parser')
+const compression = require('compression');
 
 const AppErorr = require('./utils/appError.js');
 const ToursRout = require('./Routs/ToursRouts');
@@ -72,6 +73,8 @@ app.use(
 
 app.use(express.static(path.join(__dirname, 'public'))); // to access static files e.g : html css imgs etc.
 
+app.use(compression());
+
 app.use((req, res, next) => {
  // console.log(req.cookies);
   next();
@@ -83,6 +86,7 @@ app.use('/api/v1/tours', ToursRout);
 app.use('/api/v1/users', UserRout);
 app.use('/api/v1/reviwes', reviewRout);
 app.use('/api/v1/bookings', bookingRouter);
+
 //! if we are able to reach this point then there is no rout to handle the request
 // all : for all http requests
 // * :for any rout url

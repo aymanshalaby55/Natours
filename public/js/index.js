@@ -55,7 +55,6 @@ if (userPasswordForm){
   });
 }
 if(bookBtn){
-  console.log('hello');
   bookBtn.addEventListener("click", (e) => {
     e.target.textContent = 'Processing...';
     const { tourId } = e.target.dataset;

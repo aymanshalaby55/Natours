@@ -58,6 +58,6 @@ exports.createCheckoutSession = CatchAsync(async (req, res, next) => {
 });
 
 exports.CreateBooking = factory.createOne(Booking);
-exports.getAllBookings = factory.getAll(Booking);
+exports.getALlBookings = factory.getAll(Booking);
 exports.DeleteBooking = factory.deleteOne(Booking);
 exports.updateBooking = factory.UpdateOne(Booking);

@@ -8,7 +8,7 @@
     "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
     "debug": "ndb server.js",
-    "watch:js":"parcel watch ./public/js/index.js --out-dir ./public/js --public-url /js --out-file bundle.js",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --public-url /js --out-file bundle.js",
     "build:js": "parcel build ./public/js/index.js --public-url /js --out-dir ./public/js --out-file bundle.js"
   },
   "author": "ayman",
@@ -17,6 +17,7 @@
     "@babel/polyfill": "^7.12.1",
     "axios": "^1.6.2",
     "bcrypt": "^5.1.1",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cros": "^1.0.1",

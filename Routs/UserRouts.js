@@ -1,5 +1,6 @@
 // USERS Routs
 const express = require('express');
+const multer = require('multer');
 const UserControllers = require('./../Controllers/Usercontroller');
 const authController = require('./../Controllers/authController');
 
@@ -15,11 +16,16 @@ rout.patch('/resetPassword/:token', authController.resetPassword);
 rout.use(authController.protect);
 
 rout.get('/me', UserControllers.getMe, UserControllers.getUser);
-rout.route('/').get(UserControllers.GetAllUsers);
 
 rout.patch('/updatePassword', authController.UpdatePassword);
 
-rout.patch('/UpdateMe', UserControllers.UpdateMe);
+rout.patch(
+  '/UpdateMe',
+  UserControllers.upLoadUserPhoto,
+  UserControllers.resizeUserPhoto,
+  UserControllers.UpdateMe
+); // photo is the name in the field
 rout.delete('/DeleteUser', UserControllers.deleteUser);
 
+rout.route('/').get(UserControllers.GetAllUsers);
 module.exports = rout;

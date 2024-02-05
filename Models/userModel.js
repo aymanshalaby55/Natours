@@ -37,7 +37,7 @@ const UserSchema = mongoose.Schema({
       message: "password dosn't match"
     }
   },
-  photo: String,
+  photo: { type: String, default: 'default.jpg' },
   passwordChangedAt: Date,
   passwordResetToken: String,
   expireResetToken: Date,

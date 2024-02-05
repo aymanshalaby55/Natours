@@ -14,6 +14,7 @@ const AppErorr = require('./utils/appError.js');
 const ToursRout = require('./Routs/ToursRouts');
 const UserRout = require('./Routs/UserRouts');
 const reviewRout = require('./Routs/reviewRout');
+const bookingRouter = require('./Routs/bookingRouts');
 const GlobalError = require('./Controllers/errorController.js');
 const viewRouts = require('./Routs/viewRouts.js');
 
@@ -81,6 +82,7 @@ app.use('/', viewRouts);
 app.use('/api/v1/tours', ToursRout);
 app.use('/api/v1/users', UserRout);
 app.use('/api/v1/reviwes', reviewRout);
+app.use('/api/v1/bookings', bookingRouter);
 //! if we are able to reach this point then there is no rout to handle the request
 // all : for all http requests
 // * :for any rout url

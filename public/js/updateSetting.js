@@ -3,6 +3,7 @@ import axios from 'axios';
 import { showAlert } from './alerts';
 
 export const updateData = async (data, type) => {
+  console.log(data);
   try {
     const url =
       type === 'password'
@@ -14,7 +15,10 @@ export const updateData = async (data, type) => {
     const res = await axios({
       method: 'PATCH',
       url,
-      data
+      data,    
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
     });
 
     if (res.data.status === 'success') {

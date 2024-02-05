@@ -1,10 +1,65 @@
 const { default: mongoose } = require('mongoose');
+const multer = require('multer'); // used to upload data.
+const sharp = require('sharp'); // used for resizing images.
 const Tour = require('../Models/TourModel'); // handle node models
 const CatchAsync = require('./../utils/CatchAsync');
 const AppErorr = require('./../utils/appError');
 const factory = require('./handlerFactory');
 
-// for the most used routs
+const multerStorage = multer.memoryStorage(); // save photo to buffer.
+// filter  data that isn't image.
+const multerFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppErorr('not Image! upload only images', 400), false);
+  }
+};
+
+//
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+});
+exports.uploadTourImage = upload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  {
+    name: 'images',
+    maxCount: 3
+  }
+]);
+
+exports.resizeTourImage = CatchAsync(async (req, res, next) => {
+  // for the most used routs
+  if (!req.files.imageCover || !req.files.images) return next();
+  console.log(req.files);
+  const imageCoverFilename = `tour-${req.params.id}-${Date.now}-cover.jpeg`;
+
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2000, 1333)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/tours/${imageCoverFilename}`);
+  // to update imageCover in our DataBase.
+  req.body.imageCover = imageCoverFilename;
+  req.body.images = [];
+
+  await Promise.all(
+    req.files.images.map(async (file, i) => {
+      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+
+      await sharp(file.buffer)
+        .resize(2000, 1333)
+        .toFormat('jpeg')
+        .jpeg({ quality: 90 })
+        .toFile(`public/img/tours/${filename}`);
+
+      req.body.images.push(filename);
+    })
+  );
+
+  next();
+});
 exports.aliastoptours = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = 'ratingsAverage,-price';

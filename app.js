@@ -17,15 +17,17 @@ const UserRout = require('./Routs/UserRouts');
 const reviewRout = require('./Routs/reviewRout');
 const bookingRouter = require('./Routs/bookingRouts');
 const GlobalError = require('./Controllers/errorController.js');
+const bookingController = require('./Controllers/bookingController.js');
 const viewRouts = require('./Routs/viewRouts.js');
 
 const app = express();
+
+app.enable('trust proxy');
+
 // 2) middlewares
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
-
-const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
 app.use(helmet()); // set security https headers
 
@@ -35,6 +37,7 @@ if (process.env.NODE_ENV === 'development') {
 
 
 app.use(cors());
+app.options('*',cors());
 
 // limit req for same api
 const limit = rateLimit({
@@ -45,6 +48,9 @@ const limit = rateLimit({
 
 // only for api rout
 app.use('/api', limit);
+
+// webhood dose need data in stream insted of json
+app.post('/webhook-checkout', express.raw({type: 'application/json'}) , bookingController.webhookCheckout)
 
 // Body parser, reading data for body (req.body)
 app.use(express.json({ limit: '10kb' })); // limit body size to 10kb only

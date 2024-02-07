@@ -39,7 +39,7 @@ const server = app.listen(port, () => {
 
 // unhandled rejection : ex : promises without catch
 process.on('unhandledRejection', err => {
-  console.log(err.name, err.message);
+  console.log(err.name, err.message, err);
   console.log('unHandled Expection, shuting Down...🔥💣');
   //close the server to handle process that is still handled
   server.close(() => {
